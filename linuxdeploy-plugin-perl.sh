@@ -176,7 +176,7 @@ while IFS= read -r -d $'\0'; do
     if [[ "$known" -eq 0 ]]; then
         so_dirs+=("$so_file_dir")
     fi
-done < <(find "$APPDIR"/usr/lib/5.*/x86_64-linux/ -type f -iname '*.so*' -print0)
+done < <(find "$APPDIR"/usr/lib/{site_perl/,}5.*/x86_64-linux/ -type f -iname '*.so*' -print0)
 
 extra_args=()
 for so_dir in "${so_dirs[@]}"; do
