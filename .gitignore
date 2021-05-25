@@ -1,0 +1,6 @@
+*-build-*/
+*.AppImage
+*.swp
+_temp_home/
+*.tar*
+*AppDir*/
