@@ -159,4 +159,4 @@ for pkg in "${pkgs[@]}"; do
 done
 
 # make sure to deploy all new libraries placed in the AppDir by cpanm
-"$LINUXDEPLOY" --appdir "$APPDIR"
+env LINUXDEPLOY_PLUGIN_MODE=1 "$LINUXDEPLOY" --appdir "$APPDIR"
