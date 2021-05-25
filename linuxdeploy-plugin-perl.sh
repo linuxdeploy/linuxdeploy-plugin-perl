@@ -159,4 +159,29 @@ for pkg in "${pkgs[@]}"; do
 done
 
 # make sure to deploy all new libraries placed in the AppDir by cpanm
-env LINUXDEPLOY_PLUGIN_MODE=1 "$LINUXDEPLOY" --appdir "$APPDIR"
+so_dirs=()
+
+while IFS= read -r -d $'\0'; do
+    so_file="$REPLY"
+    so_file_dir="$(readlink -f "$(dirname "$so_file")")"
+
+    known=0
+    for i in "${so_dirs[@]}"; do
+        if [[ "$i" == "$so_file_dir" ]]; then
+            known=1
+            break
+        fi
+    done
+
+    if [[ "$known" -eq 0 ]]; then
+        so_dirs+=("$so_file_dir")
+    fi
+done < <(find "$APPDIR"/usr/lib/5.*/x86_64-linux/ -type f -iname '*.so*' -print0)
+
+extra_args=()
+for so_dir in "${so_dirs[@]}"; do
+    echo ".so files found in $so_dir, deploying with linuxdeploy"
+    extra_args+=("--deploy-deps-only" "$so_dir")
+done
+
+env LINUXDEPLOY_PLUGIN_MODE=1 "$LINUXDEPLOY" --appdir "$APPDIR" "${extra_args[@]}"
